@@ -129,5 +129,20 @@ Out_Of_Samp_Err <- 1-FinalAcc
 rownames(Out_Of_Samp_Err) <- "Out-of-sample error"
 Out_Of_Samp_Err
 ```
+**Predicting the given Testing data with the Model obtained by Random Forest**
 
+```{r}
+predictionFinal <- predict(Model_RF, testing)
+predictionFinal
+
+pml_write_files = function(x){
+  n = length(x)
+  for(i in 1:n){
+    filename = paste0("problem_id_",i,".txt")
+    write.table(x[i],file=filename,quote=FALSE,row.names=FALSE,col.names=FALSE)
+  }
+}
+
+pml_write_files(predictionFinal)
+```
 
