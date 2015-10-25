@@ -91,12 +91,6 @@ for(i in 1:length(training)) { # analyze every column in the training dataset
 trainingV3 <- trainingV3 [,-rem] #Remove all the accumulated columns
 dim(trainingV3)
 ```
-We will apply PCA if there are many highly correlated variables
-
-```{r}
-HighCorrVars <- caret::findCorrelation(cor(trainingV3[, -54]), cutoff=0.8)
-names(trainingV3)[HighCorrVars]
-```
 
 **Performing Cross Validation**
 
@@ -113,19 +107,27 @@ subTestingV3 <- trainingV3[-subsamples, ]
 Three different methods will be estimated, Decision Tree, Support Vector Machine (linear)  and Random forest.
 
 ```{r}
-Model_RP <- train(classe ~ ., method="rpart", data = subTrainigV3, preProcess = "pca")
-Model_SVM  <- train(classe ~ ., method ="svmLinear", data = subTrainigV3, preProcess = "pca")
-Model_RF <- train(classe ~ ., method="rf", data = subTrainigV3, preProcess = "pca")
+Model_RP <- train(classe ~ ., method="rpart", data = subTrainigV3)
+Model_SVM  <- train(classe ~ ., method ="svmLinear", data = subTrainigV3)
+Model_RF <- train(classe ~ ., method="rf", data = subTrainigV3)
 
 
 RP <- confusionMatrix(predict(Model_RP, subTestingV3), subTestingV3$classe)
 SVM <- confusionMatrix(predict(Mod_SVM, subTestingV3), subTestingV3$classe)
 RF <- confusionMatrix(predict(Model_RF, subTestingV3), subTestingV3$classe)
+```
 
+**Accuracy and out-of-sample error**
 
-RP
-SVM
-RF
+```{r}
+FinalAcc <- data.frame(RP$overall[1], SVM$overall[1], RF$overall[1])
+colnames(FinalAccuracy) <- c("RP overall", "SVM overall", "RF overall")
+FinalAcc
+
+# show the out-of-sample error
+Out_Of_Samp_Err <- 1-FinalAcc
+rownames(Out_Of_Samp_Err) <- "Out-of-sample error"
+Out_Of_Samp_Err
 ```
 
 
